@@ -1,13 +1,13 @@
 package getLatestVersionNum;
 
 public class VersionResponse {
-	private String status;
-	private String notice;
-	private String data;
-	
-	public String getStatus() { return status; };
-	
+	private Integer status = 1;
+	private String notice = null;
+	private Integer data = -1;
+
+	public Integer getStatus() { return status; };
+
 	public String getNotice() { return notice; };
 
-	public String getData() { return data; };
+	public Integer getData() { return data; };
 }
