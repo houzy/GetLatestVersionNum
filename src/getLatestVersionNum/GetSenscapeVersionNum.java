@@ -39,11 +39,15 @@ public class GetSenscapeVersionNum {
 	private Observable<VersionResponse> getLatestVersionNum(final Integer versionNum) {
         return Observable.create(new Observable.OnSubscribe<VersionResponse>() {
             public void call(Subscriber<? super VersionResponse> subscriber) {
-                try {
-                    subscriber.onNext(mService.getLatestVersionNum(versionNum));
-                    subscriber.onCompleted();
-                } catch (Exception e) {
+            	// subscriber.onNext(mService.getLatestVersionNum(versionNum));
+        		// subscriber.onCompleted();
+            	// or
+            	try {
+            		subscriber.onNext(mService.getLatestVersionNum(versionNum));
+            		subscriber.onCompleted();
+            	} catch (Exception e) {
                     e.printStackTrace();
+                    subscriber.onError(e);
                 }
             }
         });
@@ -55,7 +59,8 @@ public class GetSenscapeVersionNum {
         versionResponseObservable
                 //.subscribeOn(Schedulers.newThread())
                 //.observeOn(Schedulers.mainThread())
-                .subscribe(new Action1<VersionResponse>() {
+                .subscribe(
+                new Action1<VersionResponse>() {
                     @Override
                     public void call(VersionResponse versionResponse) {
                     	System.out.println("--------versionResponse.getStatus()-----" + versionResponse.getStatus());
@@ -63,6 +68,13 @@ public class GetSenscapeVersionNum {
                     	System.out.println("--------versionResponse.getData()-----" + versionResponse.getData());
 
                     }
+                },
+                new Action1<Throwable>() {
+                	@Override
+                	public void call(Throwable e) {
+                		System.out.println("onError");
+                		e.printStackTrace();
+                	}
                 });
     }
 
