@@ -35,48 +35,48 @@ public class GetSenscapeVersionNum {
 
 		}
 	}
-	
+
 	private Observable<VersionResponse> getLatestVersionNum(final Integer versionNum) {
-        return Observable.create(new Observable.OnSubscribe<VersionResponse>() {
-            public void call(Subscriber<? super VersionResponse> subscriber) {
-            	// subscriber.onNext(mService.getLatestVersionNum(versionNum));
-        		// subscriber.onCompleted();
-            	// or
-            	try {
-            		subscriber.onNext(mService.getLatestVersionNum(versionNum));
-            		subscriber.onCompleted();
-            	} catch (Exception e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
-	
+		return Observable.create(new Observable.OnSubscribe<VersionResponse>() {
+			public void call(Subscriber<? super VersionResponse> subscriber) {
+				subscriber.onNext(mService.getLatestVersionNum(versionNum));
+				subscriber.onCompleted();
+				// or
+				/*try {
+				  subscriber.onNext(mService.getLatestVersionNum(versionNum));
+				  subscriber.onCompleted();
+				  } catch (Exception e) {
+				  e.printStackTrace();
+				  subscriber.onError(e);
+				  }*/
+			}
+		});
+	}
+
 	private void getLatestVersion() {
-        Observable<VersionResponse> versionResponseObservable = getLatestVersionNum(0);
+		Observable<VersionResponse> versionResponseObservable = getLatestVersionNum(0);
 
-        versionResponseObservable
-                //.subscribeOn(Schedulers.newThread())
-                //.observeOn(Schedulers.mainThread())
-                .subscribe(
-                new Action1<VersionResponse>() {
-                    @Override
-                    public void call(VersionResponse versionResponse) {
-                    	System.out.println("--------versionResponse.getStatus()-----" + versionResponse.getStatus());
-                    	System.out.println("--------versionResponse.getNotice()-----" + versionResponse.getNotice());
-                    	System.out.println("--------versionResponse.getData()-----" + versionResponse.getData());
+		versionResponseObservable
+			//.subscribeOn(Schedulers.newThread())
+			//.observeOn(Schedulers.mainThread())
+			.subscribe(
+					new Action1<VersionResponse>() {
+						@Override
+						public void call(VersionResponse versionResponse) {
+							System.out.println("--------versionResponse.getStatus()-----" + versionResponse.getStatus());
+							System.out.println("--------versionResponse.getNotice()-----" + versionResponse.getNotice());
+							System.out.println("--------versionResponse.getData()-----" + versionResponse.getData());
 
-                    }
-                },
-                new Action1<Throwable>() {
-                	@Override
-                	public void call(Throwable e) {
-                		System.out.println("onError");
-                		e.printStackTrace();
-                	}
-                });
-    }
+						}
+					},
+					new Action1<Throwable>() {
+						@Override
+						public void call(Throwable e) {
+							System.out.println("onError");
+							e.printStackTrace();
+						}
+					});
+	}
 
 	/**
 	 * @param args
@@ -87,7 +87,7 @@ public class GetSenscapeVersionNum {
 
 		GetSenscapeVersionNum getSenscapeVersionNum = new GetSenscapeVersionNum();
 		getSenscapeVersionNum.getLatestVersion();
-		
+
 	}
 
 }
