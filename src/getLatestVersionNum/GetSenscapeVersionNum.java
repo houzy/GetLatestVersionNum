@@ -3,12 +3,15 @@ package getLatestVersionNum;
 import retrofit.RestAdapter;
 import retrofit.http.GET;
 import retrofit.http.Query;
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
 
 public class GetSenscapeVersionNum {
 
-	private RestAdapter restAdapter = null;
-	private SenscapeV2Service service = null;
-	private VersionResponse repos = null;
+	private RestAdapter mRestAdapter = null;
+	private SenscapeV2Service mService = null;
+	private VersionResponse mRepos = null;
 
 	private interface SenscapeV2Service {
 		@GET("/get_latest_version")
@@ -18,11 +21,11 @@ public class GetSenscapeVersionNum {
 	public GetSenscapeVersionNum() {
 		try {
 			System.out.println("GetSenscapeVersionNum");
-			restAdapter = new RestAdapter.Builder()
+			mRestAdapter = new RestAdapter.Builder()
 				.setEndpoint("http://asia.senscape.com.cn/v2/api")
 				.build();
 
-			service = restAdapter.create(SenscapeV2Service.class);
+			mService = mRestAdapter.create(SenscapeV2Service.class);
 		}
 		catch (Exception e) {
 
@@ -32,29 +35,36 @@ public class GetSenscapeVersionNum {
 
 		}
 	}
+	
+	private Observable<VersionResponse> getLatestVersionNum(final Integer versionNum) {
+        return Observable.create(new Observable.OnSubscribe<VersionResponse>() {
+            public void call(Subscriber<? super VersionResponse> subscriber) {
+                try {
+                    subscriber.onNext(mService.getLatestVersionNum(versionNum));
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+	
+	private void getLatestVersion() {
+        Observable<VersionResponse> versionResponseObservable = getLatestVersionNum(0);
 
-	public VersionResponse getLatestVersionNum()
-	{
-		if (service != null)
-		{
-			try {
-				repos = service.getLatestVersionNum(0);
-			}
-			catch (Exception e) {
+        versionResponseObservable
+                //.subscribeOn(Schedulers.newThread())
+                //.observeOn(Schedulers.mainThread())
+                .subscribe(new Action1<VersionResponse>() {
+                    @Override
+                    public void call(VersionResponse versionResponse) {
+                    	System.out.println("--------versionResponse.getStatus()-----" + versionResponse.getStatus());
+                    	System.out.println("--------versionResponse.getNotice()-----" + versionResponse.getNotice());
+                    	System.out.println("--------versionResponse.getData()-----" + versionResponse.getData());
 
-				// TODO Auto-generated catch block
-
-				e.printStackTrace();			
-			}
-		}
-		return repos;
-	}
-
-	public void requestVersionNum() {
-		if (service != null) {
-			repos = service.getLatestVersionNum(0);	
-		}
-	}
+                    }
+                });
+    }
 
 	/**
 	 * @param args
@@ -64,16 +74,8 @@ public class GetSenscapeVersionNum {
 		System.out.println("GetLatestVersionNum");
 
 		GetSenscapeVersionNum getSenscapeVersionNum = new GetSenscapeVersionNum();
-		VersionResponse repos = getSenscapeVersionNum.getLatestVersionNum();
-		if (repos != null) {
-			System.out.println(repos.getStatus());
-			System.out.println(repos.getNotice());
-			System.out.println(repos.getData());
-		}
-		else {
-			System.out.println("repos is null!");
-		}
-
+		getSenscapeVersionNum.getLatestVersion();
+		
 	}
 
 }
