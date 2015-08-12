@@ -45,7 +45,7 @@ public class MsgUserManager {
         }
     }
 
-    public MsgUser getUser(String displayName, String phoneNumber) {
+    public MsgUser createUser(String displayName, String phoneNumber) {
         MsgUser msgUser = new MsgUser();
         msgUser.displayName = displayName;
         msgUser.phoneNumber = phoneNumber;
@@ -76,12 +76,18 @@ public class MsgUserManager {
 
     public void commit() {
         synchronized (msgUsersList) {
+        	String sendPhoneNums = new String();
+        	String sendContent = "您的验证码是：954163。请不要把验证码泄露给其他人。【微网通联】";
             for (MsgUser l : msgUsersList) {
             	System.out.println(TAG + l.displayName + ":" + l.phoneNumber);
-                String sendContent = "您的验证码是：954163。请不要把验证码泄露给其他人。【微网通联】";
-                sendMsg(l, sendContent);
+            	if (sendPhoneNums.length() == 0) {
+                    sendPhoneNums = l.phoneNumber;
+                } else {
+                    sendPhoneNums = sendPhoneNums + "," + l.phoneNumber;
+                }
             }
             clearUser();
+            sendMsg(sendPhoneNums, sendContent);
         }
     }
 
@@ -99,8 +105,8 @@ public class MsgUserManager {
         });
     }
 
-    private void sendMsg(MsgUser msgUser, String content) {
-        Observable<MsgResponse> versionResponseObservable = createMsgSender(msgUser.phoneNumber, content);
+    private void sendMsg(String phoneNumList, String content) {
+        Observable<MsgResponse> versionResponseObservable = createMsgSender(phoneNumList, content);
 
         // 订阅被观察者
         versionResponseObservable
@@ -132,7 +138,9 @@ public class MsgUserManager {
 		System.out.println("MsgUserManager");
 
 		MsgUserManager msgUserManager = new MsgUserManager();
-		MsgUserManager.MsgUser msgUser = msgUserManager.getUser("侯朝阳", "13466389546");
+		MsgUserManager.MsgUser msgUser = msgUserManager.createUser("阳", "13466389546");
+		msgUserManager.addUser(msgUser);
+		msgUser = msgUserManager.createUser("飞", "15210954842");
 		msgUserManager.addUser(msgUser);
 		msgUserManager.commit();
 
