@@ -140,7 +140,7 @@ public class MsgUserManager {
 		MsgUserManager msgUserManager = new MsgUserManager();
 		MsgUserManager.MsgUser msgUser = msgUserManager.createUser("阳", "13466389546");
 		msgUserManager.addUser(msgUser);
-		msgUser = msgUserManager.createUser("飞", "15210954842");
+		msgUser = msgUserManager.createUser("飞", "6813863");
 		msgUserManager.addUser(msgUser);
 		msgUserManager.commit();
 
