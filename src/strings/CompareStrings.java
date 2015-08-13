@@ -33,5 +33,10 @@ public class CompareStrings {
 		} else {
 			System.out.println("c2 != a2");
 		}
+
+		String d1 = null;
+		//String d2 = new String(null); // error
+		String d2 = new String(d1); // error
+		System.out.println(d2);
 	}
 }
